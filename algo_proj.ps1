@@ -10,7 +10,7 @@ param (
     [Parameter(Mandatory=$false)]
     [string]$gradedtests,
     [Parameter(Mandatory=$false, Position=1)]
-    [string]$solution_path,
+    [string]$solution_file,
     [Parameter(Mandatory=$false, Position=2)]
     [string]$type,
     [Parameter(Mandatory=$false, Position=3)]
@@ -67,15 +67,16 @@ if ($op -eq "create") {
 	Create-Project -cname $cname -tc_proj $tc_proj -testdata_path $testdata_path -gradedtests $gradedtests
 } elseif ($op -eq "add") {
 	$file_to_add_path = Resolve-Path $file_to_add
-	$solution_path_resolved = Resolve-Path $solution_path
-	$cname_tmp = (Split-Path $solution_path_resolved -Leaf)
+	$solution_file_resolved = Resolve-Path $solution_file
+	$solution_path = Split-Path -Path $solution_file_resolved
+	$cname_tmp = (Split-Path $solution_path -Leaf)
 	$fname = (Split-Path $file_to_add_path -Leaf)
 
 	if ($type -eq "problem") {
-		Copy-Item $file_to_add_path -Destination "$solution_path_resolved/$cname_tmp/"
+		Copy-Item $file_to_add_path -Destination "$solution_path/$cname_tmp/"
 		"Added problem $fname"
 	} elseif ($type -eq "test") {
-		Copy-Item $file_to_add_path -Destination "$solution_path_resolved/$cname_tmp.Tests/"
+		Copy-Item $file_to_add_path -Destination "$solution_path/$cname_tmp.Tests/"
 		"Added test $fname"
 	}
 }
