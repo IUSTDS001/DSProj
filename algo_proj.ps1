@@ -1,19 +1,19 @@
 param (
-    [Parameter(Mandatory=$true, Position=0)]
-    [string]$op,
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$false, Position=0, ParameterSetName='Create')]
+    [switch]$Create,
+    [Parameter(Mandatory=$true, ParameterSetName='Create')]
     [string]$cname,
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$true, ParameterSetName='Create')]
     [string]$testcommon,
-    [Parameter(Mandatory=$false)]
+    [Parameter(Mandatory=$true, ParameterSetName='Create')]
     [string]$testdata,
-    [Parameter(Mandatory=$false)]
-    [string]$gradedtests,
-    [Parameter(Mandatory=$false, Position=1)]
+    [Parameter(Mandatory=$false, Position=0, ParameterSetName='Add')]
+    [switch]$Add,
+    [Parameter(Mandatory=$true, Position=1, ParameterSetName='Add')]
     [string]$solution_file,
-    [Parameter(Mandatory=$false, Position=2)]
+    [Parameter(Mandatory=$true, Position=2, ParameterSetName='Add')]
     [string]$type,
-    [Parameter(Mandatory=$false, Position=3)]
+    [Parameter(Mandatory=$true, Position=3, ParameterSetName='Add')]
     [string]$file_to_add
 )
 
@@ -61,11 +61,11 @@ function Create-Project {
 	$fileContent | Set-Content $test_proj
 }
 
-if ($op -eq "create") {
+if ($Create) {
 	$tc_proj=Resolve-Path $testcommon
 	$test_data_path=Resolve-Path $testdata
 	Create-Project -cname $cname -tc_proj $tc_proj -testdata_path $testdata_path -gradedtests $gradedtests
-} elseif ($op -eq "add") {
+} elseif ($Add) {
 	$file_to_add_path = Resolve-Path $file_to_add
 	$solution_file_resolved = Resolve-Path $solution_file
 	$solution_path = Split-Path -Path $solution_file_resolved
