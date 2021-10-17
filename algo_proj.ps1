@@ -11,10 +11,10 @@ param (
     [switch]$Add,
     [Parameter(Mandatory=$true, Position=1, ParameterSetName='Add')]
     [string]$solution_file,
-    [Parameter(Mandatory=$true, Position=2, ParameterSetName='Add')]
-    [string]$type,
-    [Parameter(Mandatory=$true, Position=3, ParameterSetName='Add')]
-    [string]$file_to_add
+    [Parameter(Mandatory=$false, Position=2, ParameterSetName='Add')]
+    [string]$Problem,
+    [Parameter(Mandatory=$false, Position=2, ParameterSetName='Add')]
+    [string]$Test
 )
 
 function Create-Project {
@@ -66,17 +66,19 @@ if ($Create) {
 	$test_data_path=Resolve-Path $testdata
 	Create-Project -cname $cname -tc_proj $tc_proj -testdata_path $testdata_path -gradedtests $gradedtests
 } elseif ($Add) {
-	$file_to_add_path = Resolve-Path $file_to_add
 	$solution_file_resolved = Resolve-Path $solution_file
 	$solution_path = Split-Path -Path $solution_file_resolved
 	$cname_tmp = (Split-Path $solution_path -Leaf)
-	$fname = (Split-Path $file_to_add_path -Leaf)
 
-	if ($type -eq "problem") {
-		Copy-Item $file_to_add_path -Destination "$solution_path/$cname_tmp/"
+	if ($Problem) {
+		$problem_to_add_path = Resolve-Path $Problem
+		Copy-Item $problem_to_add_path -Destination "$solution_path/$cname_tmp/"
+		$fname = (Split-Path $problem_to_add_path -Leaf)
 		"Added problem $fname"
-	} elseif ($type -eq "test") {
-		Copy-Item $file_to_add_path -Destination "$solution_path/$cname_tmp.Tests/"
+	} elseif ($Test) {
+		$test_to_add_path = Resolve-Path $Test
+		Copy-Item $test_to_add_path -Destination "$solution_path/$cname_tmp.Tests/"
+		$fname = (Split-Path $test_to_add_path -Leaf)
 		"Added test $fname"
 	}
 }
