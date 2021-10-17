@@ -16,6 +16,7 @@ param (
     [Parameter(Mandatory=$false, Position=2, ParameterSetName='Add')]
     [string]$Test
 )
+$start_path = (Get-Item .).FullName
 
 function Create-Project {
 	param (
@@ -83,4 +84,4 @@ if ($Create) {
 	}
 }
 
-cd $PSScriptRoot
+cd $start_path
